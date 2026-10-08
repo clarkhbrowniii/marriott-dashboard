@@ -108,6 +108,12 @@
     .sources-panel { margin-top:14px; padding:18px; }
     .chart-heading { flex-wrap:wrap; } .chart-heading > div { flex:1; min-width:160px; }
     html { scroll-behavior:smooth; scroll-padding-top:15px; }
+    .back-to-top { position:fixed; right:20px; bottom:20px; z-index:20; display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:10px 16px; border:1px solid var(--border); border-radius:6px; background:var(--navy); color:white; font-size:1em; font-weight:600; text-decoration:none; box-shadow:0 3px 12px #14253e26; }
+    .back-to-top:hover { background:var(--blue); }
+    .back-to-top:focus-visible { outline:3px solid var(--burgundy); outline-offset:3px; }
+    body { padding-bottom:80px; }
+    @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+    @media print { .back-to-top { display:none; } body { padding-bottom:0; } }
     @media(max-width:1279px) { .executive-summary { grid-template-columns:250px 1fr; } .cards { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:16px; } .chart-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .brand-banner { grid-template-columns:230px 1fr 150px; } }
     @media(max-width:1000px) { .chart-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .insight-grid { grid-template-columns:1fr; } .brand-banner { grid-template-columns:200px 1fr; } .brand-promise { display:none; } .wordmark strong { font-size:36px; } }
     @media(max-width:760px) { .executive-summary { grid-template-columns:1fr; } .summary-intro { margin-bottom:18px; } .chart-grid { grid-template-columns:1fr; } .brand-banner { grid-template-columns:1fr; } .wordmark { border:0; text-align:left; padding:18px 20px 0; } .banner-copy { padding:14px 20px 20px; } .banner-copy p { font-size:1em; } .dashboard-nav { flex-direction:column; align-items:flex-start; gap:8px; padding:0 16px 10px; } .nav-links { gap:16px; flex-wrap:wrap; } .notice-row { flex-direction:column; align-items:flex-start; } .canvas-wrap,.primary .canvas-wrap { height:250px; } }
@@ -119,7 +125,7 @@
 <body>
 <main>
   <header><div class="brand-banner"><div class="wordmark" aria-label="Marriott International"><strong>Marriott</strong><span>International</span></div><div class="banner-copy"><h1 id="dashboard-title"></h1><p id="banner-subtitle"></p><span id="company-name" class="sr-only"></span></div><div class="brand-promise" id="brand-promise"></div></div>
-    <nav class="dashboard-nav" aria-label="Dashboard sections"><div class="nav-links"><a class="active" href="#executive-view">Executive View</a><a href="#kpi-trends">KPI Trends</a><a href="#key-insights">Key Insights</a><a href="#data-sources">Data Sources</a></div><div class="period" id="reporting-period"></div></nav>
+    <nav id="main-nav" tabindex="-1" class="dashboard-nav" aria-label="Dashboard sections"><div class="nav-links"><a class="active" href="#executive-view">Executive View</a><a href="#kpi-trends">KPI Trends</a><a href="#key-insights">Key Insights</a><a href="#data-sources">Data Sources</a></div><div class="period" id="reporting-period"></div></nav>
   </header>
   <div class="notice-row"><div class="eyebrow" id="project-label"></div><div id="data-notice" class="badge" role="status"></div></div>
   <section id="executive-view" class="executive-summary" aria-labelledby="summary-heading"><div class="summary-intro"><h2 id="summary-heading"></h2><p class="thesis" id="thesis"></p></div><div id="kpi-cards" class="cards"></div></section>
@@ -129,6 +135,7 @@
   <footer><span id="footer-project"></span><span id="footer-status"></span></footer>
   <noscript><p class="error">Enable JavaScript to display the dashboard.</p></noscript>
 </main>
+<a class="back-to-top" href="#main-nav" aria-label="Back to top, main navigation"><span aria-hidden="true">↑</span> Back to top</a>
 <script>
 'use strict';
 // SECTION 1 · DATA CONFIGURATION — edit this object to replace the illustrative dataset.
