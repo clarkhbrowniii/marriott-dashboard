@@ -106,6 +106,13 @@
     .insight-panel li { font-size:1em; line-height:1.4; color:var(--muted); } .insight-panel ul { padding-left:20px; margin:0; } .insight-panel ul li { margin-bottom:7px; }
     .insight-disclaimer { font-size:1em; color:var(--burgundy); margin:0 0 12px; }
     .sources-panel { margin-top:14px; padding:18px; }
+    .digital-legend { display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px; color:var(--muted); }
+    .digital-legend > span { display:inline-flex; align-items:center; gap:7px; }
+    .digital-swatch { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+    .metric-note { font-size:1em; color:var(--muted); line-height:1.45; margin:10px 0; overflow-wrap:anywhere; }
+    .empty-chart { height:100%; display:flex; align-items:center; padding:20px; border:1px dashed var(--border); border-radius:5px; color:var(--muted); background:#f5f8fa; font-size:1em; }
+    .badge { overflow-wrap:anywhere; } .chart-heading .badge { white-space:normal; }
+    .value { overflow-wrap:anywhere; }
     .chart-heading { flex-wrap:wrap; } .chart-heading > div { flex:1; min-width:160px; }
     html { scroll-behavior:smooth; scroll-padding-top:15px; }
     .back-to-top { position:fixed; right:20px; bottom:20px; z-index:20; display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:10px 16px; border:1px solid var(--border); border-radius:6px; background:var(--navy); color:white; font-size:1em; font-weight:600; text-decoration:none; box-shadow:0 3px 12px #14253e26; }
@@ -140,41 +147,595 @@
 'use strict';
 // SECTION 1 · DATA CONFIGURATION — edit this object to replace the illustrative dataset.
 const KPI_DATA = {
-  company: {
-    name: 'Marriott International', title: 'Digital Transformation Dashboard',
-    bannerSubtitle: 'Loyalty. Direct. Digital. A Stronger Tomorrow.', brandPromise: 'PEOPLE · PLACES · POSSIBILITIES',
-    summaryTitle: 'Transforming Travel for What’s Next',
-    thesis: 'Marriott is leveraging digital platforms, data, and the power of Marriott Bonvoy to create deeper guest relationships, drive direct demand, and deliver profitable, asset-light growth.',
-    reportingPeriod: 'FY2021–FY2025', dataStatus: 'illustrative',
-    project: 'University of South Florida · Graduate Digital Transformation',
-    statusLabels: { placeholder: 'Placeholder', estimated: 'Estimated', reported: 'Reported' },
-    statusNotices: { placeholder: 'Illustrative Data | Pending Source Verification', estimated: 'Estimated Data | Review Methodology', reported: 'Reported Data | Sources Documented', mixed: 'Mixed Data | Review KPI Classifications' },
-    methodology: [
-      'All initial values are synthetic placeholders for demonstrating the dashboard. They are not Marriott disclosures and must not be used to assess actual company performance. No financial research has been performed.',
-      'Baseline comparisons use the configured baseline period and the latest non-missing observation. Percentage metrics show percentage-point changes; other metrics show absolute and relative changes. Missing observations are omitted from charts, and lines do not bridge missing years.',
-      'Worldwide Room Growth is represented here by total worldwide rooms in millions, not an annual growth rate. Illustrative annotation explanations demonstrate the format only; they do not establish causation.'
+  "company": {
+    "name": "Marriott International",
+    "title": "Digital Transformation Dashboard",
+    "bannerSubtitle": "Loyalty. Direct. Digital. A Stronger Tomorrow.",
+    "brandPromise": "PEOPLE · PLACES · POSSIBILITIES",
+    "summaryTitle": "Transforming Travel for What’s Next",
+    "thesis": "Marriott is leveraging digital platforms, data, and the power of Marriott Bonvoy to create deeper guest relationships, drive direct demand, and deliver profitable, asset-light growth.",
+    "reportingPeriod": "FY2021–FY2025",
+    "dataStatus": "mixed",
+    "project": "University of South Florida · Graduate Digital Transformation",
+    "statusLabels": {
+      "reported": "Reported · supplied sources",
+      "estimated": "Estimated · est.",
+      "calculated": "Calculated",
+      "unavailable": "Not available",
+      "placeholder": "Placeholder",
+      "unverified": "Working figure · confirm source"
+    },
+    "statusNotices": {
+      "placeholder": "Illustrative Data | Pending Source Verification",
+      "estimated": "Estimated Data | Review Methodology",
+      "reported": "Reported Data | Sources Documented",
+      "mixed": "Document-Based Data | Working Figures, Estimates & Gaps"
+    },
+    "methodology": [
+      "FY2021–FY2025 values were transcribed from the supplied KPI analyses, with KPIs 3 and 4 revised using Marriott_Week7_KPI3_KPI4_Updated_Notes.pdf. That PDF is a working research compilation; its historical growth figures, reporting scope and source references require confirmation against original disclosures before final submission.",
+      "Bonvoy membership uses rounded year-end totals; FY2021 is described as over 160 million. Direct booking is represented by reported global Bonvoy member penetration of room nights, a proxy that includes member bookings through any channel. Exact full-year proxy values for FY2021–FY2022 were not supplied; the comparison baseline is FY2023.",
+      "Worldwide Room Growth now measures annual net room growth, not total room count. FY2025 was disclosed as over 4.3%; the plotted 4.3% is a lower-bound reference, so its baseline change is also a lower bound. Supporting year-end room totals are retained in the metric notes.",
+      "Operating margin is calculated as reported operating income divided by total revenue, rounded to one decimal place. Pass-through owner reimbursements dilute the reported margin; it is not Marriott’s adjusted fee-business margin.",
+      "KPI 3 shows the supplied FY2024 digital adoption share of 38%, supported by 222M digital room nights and 5% year-over-year volume growth. The donut uses a calculated 62% complement for other channels. KPI 4 temporarily plots the updated PDF’s working annual RevPAR growth series (51.0%, 14.9%, 4.3%, 2.0% for FY2022–FY2025); RevPAR dollar values and consistent reporting scope remain needed.",
+      "Inflection explanations reflect the supplied authors’ interpretations, not proven causal attribution. The detailed operating-margin analysis classifies it as lagging; this takes precedence over the conflicting leading label in the presentation’s overview table.",
+      "The FY2024 digital-share and RevPAR-growth observations do not establish causation. No genuine adoption-share inflection is documented. FY2023 RevPAR growth normalization is a candidate requiring source confirmation; its annotation remains disabled. The earlier 12–24 month combined timing statement is a hypothesis, not an observed date."
     ]
   },
-  insights: [
-    {title:'What the Data Suggests',icon:'bulb',numbered:true,disclaimer:'Illustrative interpretation of mock data only.',items:['The mock loyalty and digital series expand alongside direct bookings, demonstrating how customer engagement indicators can be compared.','The mock RevPAR series rises from its baseline, then moderates in the final year.','The mock operating margin series improves; any explanation involving technology or scale requires supporting evidence.']},
-    {title:'Key Management Questions',icon:'target',numbered:false,items:['Can direct booking share continue to grow as online travel agencies invest in loyalty and pricing?','How does Bonvoy membership translate into revenue per member and retention?','What is the optimal balance between room growth and margin expansion?','How will AI, personalization, and dynamic pricing influence the next phase of value?']},
-    {title:'Next Steps',icon:'trend',numbered:true,items:['Validate and finalize KPI data from filings, earnings releases, and investor presentations.','Refine inflection point annotations with supporting evidence.','Develop strategic interpretation and executive recommendations.']}
+  "insights": [
+    {
+      "title": "What the Data Suggests",
+      "icon": "bulb",
+      "numbered": true,
+      "disclaimer": "Interpretation of supplied analyses; causal attribution remains limited.",
+      "items": [
+        "Bonvoy membership expands from over 160M in FY2021 to 271M in FY2025; member room-night penetration rises from 61% in FY2023 to 68% in FY2025.",
+        "Net room growth peaks at 6.8% in FY2024 while reported operating margin falls to 15.0%, showing ecosystem expansion and reported efficiency can diverge.",
+        "Digital bookings represented 38% of worldwide systemwide room nights in FY2024, totaling 222M digital room nights with 5% year-over-year volume growth. This observation does not establish an adoption acceleration date or causation of RevPAR growth."
+      ]
+    },
+    {
+      "title": "Key Management Questions",
+      "icon": "target",
+      "numbered": false,
+      "items": [
+        "Can direct booking share continue to grow as online travel agencies invest in loyalty and pricing?",
+        "How does Bonvoy membership translate into revenue per member and retention?",
+        "What is the optimal balance between room growth and margin expansion?",
+        "How will AI, personalization, and dynamic pricing influence the next phase of value?"
+      ]
+    },
+    {
+      "title": "Next Steps",
+      "icon": "trend",
+      "numbered": true,
+      "items": [
+        "Source comparable annual digital adoption shares for at least four fiscal years, or retain an explicit limited-coverage disclosure.",
+        "Replace the provisional RevPAR growth chart with FY2021–FY2025 worldwide systemwide RevPAR USD values on a consistent basis.",
+        "Confirm figures, exact source URLs/pages and management commentary before enabling the candidate FY2023 RevPAR annotation."
+      ]
+    }
   ],
-  periods: ['2021','2022','2023','2024','2025'],
-  sources: [{ id:'demo', name:'Project demonstration dataset (synthetic)', date:null, url:null, status:'placeholder', methodology:'Manually constructed illustrative sequences for layout and functionality testing. No reported Marriott values or published causal evidence are represented.' }],
-  metrics: [
-    { id:'bonvoy_members', name:'Marriott Bonvoy Membership', shortName:'Bonvoy Members', icon:'members', comparison:'relative', changeDecimals:0, chart:{max:250,colors:['#285a78']}, title:'Marriott Bonvoy Members', description:'Membership base · a leading indicator of customer relationship reach.', classification:'leading', unit:'millions', unitLabel:'Members (millions)', decimals:0, chartType:'bar', primary:true, baselinePeriod:'2021', favorableDirection:'increase', status:'placeholder', periods:['2021','2022','2023','2024','2025'], values:[131,160,180,206,228], sources:['demo'], inflectionPoints:[
-      {id:'bonvoy_2023',period:'2022',title:'Illustrative travel recovery',change:'The synthetic series increases more quickly from this period.',cause:'Hypothesis: post-pandemic travel recovery; unverified mockup explanation.',sourceId:'demo',display:true},
-      {id:'bonvoy_2025',period:'2025',title:'Illustrative sustained expansion',change:'The placeholder membership base continues expanding.',cause:'Example hypothesis: broader program reach; pending evidence and verification.',sourceId:'demo',display:false},
-      {id:'bonvoy_hidden',period:'2022',title:'Disabled demonstration',change:'This annotation is intentionally hidden.',cause:'Used to demonstrate the visibility flag.',sourceId:'demo',display:false}
-    ] },
-    { id:'direct_booking', name:'Direct Booking Percentage', shortName:'Direct Bookings',icon:'link',chart:{min:20,max:80,colors:['#285a78']},title:'Direct Booking Percentage', description:'Share of bookings through direct channels.', classification:'lagging',unit:'percent',unitLabel:'% of room nights',decimals:0,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[42,48,52,56,58],sources:['demo'],inflectionPoints:[{id:'direct_2023',period:'2023',title:'Illustrative app experience',change:'Mock direct booking share reaches 52%.',cause:'Hypothesis: enhanced app experience and personalized offers; unverified.',sourceId:'demo',display:true}] },
-    { id:'digital_adoption',name:'Digital Booking Adoption',shortName:'Digital Bookings',icon:'phone',chart:{min:20,max:100,colors:['#285a78']},title:'Digital Booking Adoption',description:'Share of bookings completed through digital channels.',classification:'leading',unit:'percent',unitLabel:'% of room nights booked digitally',decimals:0,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[55,61,66,70,72],sources:['demo'],inflectionPoints:[
-      {id:'digital_2024',period:'2024',title:'Illustrative adoption step-up',change:'The mock series reaches 70% digital adoption in FY2024.',cause:'Example hypothesis: improved digital convenience; pending evidence and verification.',sourceId:'demo',display:true}
-    ] },
-    { id:'revpar',name:'Revenue per Available Room',shortName:'RevPAR',icon:'bars',comparison:'relative',changeDecimals:0,chart:{max:200,colors:['#4c866c']},title:'Revenue per Available Room (RevPAR)',description:'Illustrative revenue per available room in US dollars.',classification:'lagging',unit:'usd',unitLabel:'RevPAR (USD)',decimals:0,chartType:'bar',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[101,123,129,135,131],sources:['demo'],inflectionPoints:[{id:'revpar_2022',period:'2022',title:'Illustrative demand recovery',change:'Mock RevPAR rises to $123.',cause:'Hypothesis: stronger leisure demand; unverified.',sourceId:'demo',display:true}] },
-    { id:'room_growth',name:'Worldwide Room Growth',shortName:'Worldwide Rooms',icon:'bed',comparison:'relative',changeDecimals:0,summaryDecimals:1,chart:{max:2,colors:['#657f91']},title:'Worldwide Room Growth',description:'Portfolio size: total rooms, not the annual room growth rate.',classification:'leading',unit:'millions',unitLabel:'Total worldwide rooms (millions)',decimals:2,chartType:'bar',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[1.45,1.52,1.60,1.66,1.70],sources:['demo'],inflectionPoints:[] },
-    { id:'operating_margin',name:'Operating Margin',shortName:'Operating Margin',icon:'coins',chart:{max:30,colors:['#285a78']},title:'Operating Margin',description:'Illustrative operating income as a percentage of revenue.',classification:'lagging',unit:'percent',unitLabel:'Operating margin (%)',decimals:1,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[11.8,15.2,16.8,18.1,18.4],sources:['demo'],inflectionPoints:[{id:'margin_2023',period:'2023',title:'Illustrative efficiency gains',change:'Mock operating margin reaches 16.8%.',cause:'Hypothesis: cost discipline and digital efficiency; unverified.',sourceId:'demo',display:true}] }
+  "periods": [
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+  ],
+  "sources": [
+    {
+      "id": "analysis12",
+      "name": "Marriott_KPI_Analysis (1).docx — KPIs 1 & 2",
+      "date": null,
+      "dateLabel": "Undated supplied analysis",
+      "url": null,
+      "status": "reported",
+      "localPath": "kpi-resources/Marriott_KPI_Analysis (1).docx",
+      "methodology": "Transcribed year-end membership and full-year global member room-night penetration. Underlying annual reports and earnings calls are named in the analysis; individual URLs are not supplied."
+    },
+    {
+      "id": "analysis56",
+      "name": "Marriott_KPI_5_6_Analysis.docx — KPIs 5 & 6",
+      "date": null,
+      "dateLabel": "Undated supplied analysis",
+      "url": null,
+      "status": "reported",
+      "localPath": "kpi-resources/Marriott_KPI_5_6_Analysis.docx",
+      "methodology": "Annual net room growth is stated in the cited earnings releases. Operating margin is calculated from the reported income and revenue table."
+    },
+    {
+      "id": "notes34",
+      "name": "Week 7 Project/Presentation Notes — Cole Kostrzewa",
+      "date": null,
+      "dateLabel": "August–October 2026 course notes; exact publication date not supplied",
+      "url": null,
+      "status": "unavailable",
+      "localPath": "kpi-resources/Week 7 Project_Presentation Notes   By_ Cole Kostrzewa.pdf",
+      "methodology": "Provides KPI definitions and strategic interpretation only; no annual numerical series or dated event evidence."
+    },
+    {
+      "id": "earnings2021",
+      "name": "Marriott Q4 and full-year 2021 earnings release",
+      "date": null,
+      "dateLabel": "Publication date not supplied in the analysis",
+      "url": "https://www.sec.gov/Archives/edgar/data/1048286/000162828022002652/mar-2021q4earningsreleasee.htm",
+      "status": "reported",
+      "methodology": "Link provided in the supplied KPI 5 & 6 analysis; disclosure not independently checked during this update."
+    },
+    {
+      "id": "earnings2022",
+      "name": "Marriott Q4 and full-year 2022 earnings release",
+      "date": null,
+      "dateLabel": "Publication date not supplied in the analysis",
+      "url": "https://www.sec.gov/Archives/edgar/data/1048286/000162828023003441/mar-2022q4earningsreleasee.htm",
+      "status": "reported",
+      "methodology": "Link provided in the supplied KPI 5 & 6 analysis; disclosure not independently checked during this update."
+    },
+    {
+      "id": "earnings2023",
+      "name": "Marriott Q4 and full-year 2023 earnings release",
+      "date": null,
+      "dateLabel": "Publication date not supplied in the analysis",
+      "url": "https://www.sec.gov/Archives/edgar/data/1048286/000162828024004335/mar-2023q4xearningsrelease.htm",
+      "status": "reported",
+      "methodology": "Link provided in the supplied KPI 5 & 6 analysis; disclosure not independently checked during this update."
+    },
+    {
+      "id": "earnings2024",
+      "name": "Marriott Q4 and full-year 2024 earnings release",
+      "date": null,
+      "dateLabel": "February 2025 (per supplied analysis)",
+      "url": "https://marriott.gcs-web.com/node/35736/pdf",
+      "status": "reported",
+      "methodology": "Link provided in the supplied KPI 5 & 6 analysis; disclosure not independently checked during this update."
+    },
+    {
+      "id": "earnings2025",
+      "name": "Marriott Q4 and full-year 2025 earnings release",
+      "date": "2026-02-10",
+      "dateLabel": "2026-02-10",
+      "url": "https://www.sec.gov/Archives/edgar/data/1048286/000104828626000005/mar-2025q4xex99earningsrel.htm",
+      "status": "reported",
+      "methodology": "Link provided in the supplied KPI 5 & 6 analysis; disclosure not independently checked during this update."
+    },
+    {
+      "id": "annual2022",
+      "name": "Marriott 2022 Annual Report — Member B attribution",
+      "date": null,
+      "dateLabel": "Publication date not supplied",
+      "url": null,
+      "status": "unverified",
+      "methodology": "Member B supplies digital room-night growth of 27% year over year for FY2022. This is a growth rate, not booking share."
+    },
+    {
+      "id": "call2023q1",
+      "name": "Marriott Q1 2023 earnings call — Member B attribution",
+      "date": null,
+      "dateLabel": "Publication date not supplied",
+      "url": null,
+      "status": "unverified",
+      "methodology": "Member B supplies 17% year-over-year digital room-night growth for Q1 2023. Quarterly observation; excluded from the annual adoption-share chart."
+    },
+    {
+      "id": "future2025",
+      "name": "Marriott Own the Future presentation, 2025 — Member B attribution",
+      "date": null,
+      "dateLabel": "2025; exact publication date not supplied",
+      "url": null,
+      "status": "unverified",
+      "methodology": "Member B supplies FY2024 digital room nights of 222M, a 38% share of systemwide room nights, and 5% room-night growth versus FY2023."
+    },
+    {
+      "id": "annual2023",
+      "name": "Marriott 2023 Annual Report — Member B attribution",
+      "date": null,
+      "dateLabel": "Publication date not supplied",
+      "url": null,
+      "status": "unverified",
+      "methodology": "Research lead for +14.9% FY2023 worldwide comparable RevPAR growth in the updated notes; confirm exact geographic and comparable-property basis. Annual digital booking share remains missing."
+    },
+    {
+      "id": "annual2024",
+      "name": "Marriott 2024 Annual Report — Member B attribution",
+      "date": null,
+      "dateLabel": "Publication date not supplied",
+      "url": null,
+      "status": "unverified",
+      "methodology": "Member B supplies worldwide RevPAR growth of 4.3% versus FY2023."
+    },
+    {
+      "id": "annual2025",
+      "name": "Marriott 2025 Annual Report — Member B attribution",
+      "date": null,
+      "dateLabel": "Publication date not supplied",
+      "url": null,
+      "status": "unavailable",
+      "methodology": "Comparable annual digital booking share is not verified in the supplied figures."
+    },
+    {
+      "id": "earnings2026q2",
+      "name": "Marriott Q2 2026 earnings release — Member B attribution",
+      "date": null,
+      "dateLabel": "Publication date not supplied",
+      "url": null,
+      "status": "unavailable",
+      "methodology": "Quarterly RevPAR result requires verification; no numeric value supplied and outside the FY2021–FY2025 reporting window."
+    },
+    {
+      "id": "updated34",
+      "name": "Marriott_Week7_KPI3_KPI4_Updated_Notes.pdf — updated working compilation",
+      "date": null,
+      "dateLabel": "Undated supplied companion notes; FY2021–FY2025 reporting window",
+      "url": null,
+      "status": "unverified",
+      "localPath": "kpi-resources/Marriott_Week7_KPI3_KPI4_Updated_Notes.pdf",
+      "methodology": "KPI 3 availability and estimation method: pages 1–2. KPI 4 provisional growth series and interpretation: pages 2–3. Remaining research and source verification checklist: pages 3–4. Primary source URL/page citations are still needed."
+    }
+  ],
+  "metrics": [
+    {
+      "id": "bonvoy_members",
+      "name": "Marriott Bonvoy Membership",
+      "shortName": "Bonvoy Members",
+      "icon": "members",
+      "comparison": "relative",
+      "changeDecimals": 0,
+      "chart": {
+        "max": 300,
+        "colors": [
+          "#285a78"
+        ]
+      },
+      "title": "Marriott Bonvoy Members",
+      "description": "Year-end loyalty members (millions)",
+      "classification": "leading",
+      "unit": "millions",
+      "unitLabel": "Members (millions)",
+      "decimals": 0,
+      "chartType": "bar",
+      "primary": true,
+      "baselinePeriod": "2021",
+      "favorableDirection": "increase",
+      "status": "reported",
+      "periods": [
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025"
+      ],
+      "values": [
+        160,
+        177,
+        196,
+        228,
+        271
+      ],
+      "sources": [
+        "analysis12"
+      ],
+      "inflectionPoints": [
+        {
+          "id": "bonvoy_2024",
+          "period": "2024",
+          "title": "Membership growth accelerates",
+          "change": "Membership rises from 196M in FY2023 to 228M in FY2024 and 271M in FY2025. The analysis cites more than 31M additions in 2024 and about 43M in 2025.",
+          "cause": "The analysis links growth to the MGM licensing agreement and wider partnerships, but Marriott has not quantified MGM’s contribution.",
+          "sourceId": "analysis12",
+          "display": true
+        }
+      ],
+      "valueQualifiers": [
+        "over",
+        null,
+        null,
+        null,
+        null
+      ],
+      "valueSources": [
+        "analysis12",
+        "analysis12",
+        "analysis12",
+        "analysis12",
+        "analysis12"
+      ],
+      "notes": [
+        "FY2021 is described as over 160 million; all annual membership totals are rounded. The displayed baseline comparison is approximate.",
+        "Underlying sources: FY2021 earnings call (February 2022); 2022 and 2023 annual reports; FY2024 call (February 11, 2025); FY2025 release and call (February 2026)."
+      ]
+    },
+    {
+      "id": "direct_booking",
+      "name": "Direct Booking Percentage — Member Room-Night Proxy",
+      "shortName": "Direct Booking Proxy",
+      "icon": "link",
+      "chart": {
+        "min": 20,
+        "max": 80,
+        "colors": [
+          "#285a78"
+        ]
+      },
+      "title": "Bonvoy Member Room-Night Penetration",
+      "description": "Global full-year member penetration (%) · proxy for direct engagement",
+      "classification": "lagging",
+      "unit": "percent",
+      "unitLabel": "Member room nights (%)",
+      "decimals": 0,
+      "chartType": "line",
+      "primary": false,
+      "baselinePeriod": "2023",
+      "favorableDirection": "increase",
+      "status": "reported",
+      "values": [
+        null,
+        null,
+        61,
+        65,
+        68
+      ],
+      "sources": [
+        "analysis12"
+      ],
+      "inflectionPoints": [
+        {
+          "id": "direct_2024",
+          "period": "2024",
+          "title": "Member penetration steps up",
+          "change": "Global full-year member penetration increases from 61% in FY2023 to 65% in FY2024 and 68% in FY2025.",
+          "cause": "The analysis associates the increase with membership growth, app engagement and co-branded cards; no single factor is assigned a quantified contribution.",
+          "sourceId": "analysis12",
+          "display": true
+        }
+      ],
+      "notes": [
+        "Proxy, not an exact direct-versus-OTA booking share: member room nights include bookings through any channel.",
+        "FY2021–FY2022 exact full-year values are unavailable in the supplied analysis. Baseline comparison uses FY2023.",
+        "Underlying sources: Marriott 2023 annual report; 2024 Form 10-K (February 2025); FY2025 earnings release and 2025 Form 10-K (February 2026)."
+      ],
+      "estimationMethodology": "No numerical direct-booking share is estimated. Reported full-year Bonvoy member penetration is used as a disclosed proxy, with its channel limitation stated."
+    },
+    {
+      "id": "digital_adoption",
+      "name": "Digital Booking Adoption",
+      "shortName": "Digital Bookings",
+      "icon": "phone",
+      "chart": { "colors": ["#285a78", "#dce1e5"] },
+      "title": "Digital Booking Adoption | FY2024",
+      "description": "Share of worldwide systemwide room nights",
+      "classification": "leading",
+      "unit": "percent",
+      "unitLabel": "Digital room-night share (%)",
+      "decimals": 0,
+      "chartType": "doughnut",
+      "doughnutValues": [38, 62],
+      "doughnutLabels": ["Digital · 222M room nights", "Other channels · calculated complement"],
+      "centerLabel": "38%",
+      "snapshot": true,
+      "primary": false,
+      "periods": ["2024"],
+      "baselinePeriod": "2024",
+      "favorableDirection": "increase",
+      "status": "unverified",
+      "values": [38],
+      "sources": ["future2025"],
+      "inflectionPoints": [],
+      "notes": [
+        "Supporting trend: Digital room-night volume grew 5% year over year in FY2024.",
+        "Based on the FY2024 figures supplied in the team's research. The 62% complement is calculated, not separately reported."
+      ]
+    },
+    {
+      "id": "revpar",
+      "name": "Revenue per Available Room — Provisional Growth Measure",
+      "shortName": "RevPAR Growth (Working)",
+      "icon": "bars",
+      "comparison": "points",
+      "changeDecimals": 0,
+      "chart": {
+        "min": 0,
+        "max": 60,
+        "colors": [
+          "#4c866c"
+        ]
+      },
+      "title": "RevPAR — Provisional Annual Growth",
+      "description": "Working worldwide comparable YoY growth (%) · USD series pending",
+      "classification": "lagging",
+      "unit": "percent",
+      "unitLabel": "Worldwide RevPAR growth (%)",
+      "decimals": 1,
+      "chartType": "bar",
+      "primary": false,
+      "baselinePeriod": "2022",
+      "favorableDirection": "increase",
+      "status": "unverified",
+      "values": [
+        null,
+        51,
+        14.9,
+        4.3,
+        2
+      ],
+      "sources": [
+        "updated34",
+        "annual2022",
+        "annual2023",
+        "annual2024",
+        "earnings2025"
+      ],
+      "inflectionPoints": [
+        {
+          "id": "revpar_2023_candidate",
+          "period": "2023",
+          "title": "Candidate: growth normalization — confirmation pending",
+          "change": "The working growth series falls from +51.0% in FY2022 to +14.9% in FY2023, followed by +4.3% in FY2024 and +2.0% in FY2025.",
+          "cause": "Possible moderation of the unusually strong post-pandemic recovery; this explanation requires confirmation against Marriott management commentary.",
+          "sourceId": "updated34",
+          "display": false
+        }
+      ],
+      "notes": [
+        "This interim chart shows annual percentage growth, not RevPAR in USD. Source FY2021–FY2025 worldwide systemwide dollar values before finalizing the selected KPI.",
+        "Working growth figures: +51.0% (FY2022), +14.9% (FY2023), +4.3% (FY2024), +2.0% (FY2025). Confirm the geographic scope and comparable-property methodology of every observation. FY2021 has no supplied dollar value or growth observation.",
+        "FY2022 is the first available growth-rate comparison baseline. Slower growth does not mean RevPAR declined.",
+        "Candidate FY2023 inflection: growth normalization from +51.0% to +14.9%. Moderation of post-pandemic recovery is a hypothesis requiring management-commentary confirmation; the chart annotation is disabled pending that evidence."
+      ],
+      "signedValues": true,
+      "valueStatuses": [
+        "unavailable",
+        "unverified",
+        "unverified",
+        "unverified",
+        "unverified"
+      ]
+    },
+    {
+      "id": "room_growth",
+      "name": "Worldwide Net Room Growth",
+      "shortName": "Net Room Growth",
+      "icon": "bed",
+      "comparison": "points",
+      "changeDecimals": 0,
+      "summaryDecimals": 1,
+      "chart": {
+        "max": 8,
+        "colors": [
+          "#657f91"
+        ]
+      },
+      "title": "Worldwide Net Room Growth",
+      "description": "Annual net growth in worldwide rooms (%)",
+      "classification": "leading",
+      "unit": "percent",
+      "unitLabel": "Annual net room growth (%)",
+      "decimals": 1,
+      "chartType": "bar",
+      "primary": false,
+      "baselinePeriod": "2021",
+      "favorableDirection": "increase",
+      "status": "reported",
+      "values": [
+        3.9,
+        3.1,
+        4.7,
+        6.8,
+        4.3
+      ],
+      "sources": [
+        "analysis56",
+        "earnings2021",
+        "earnings2022",
+        "earnings2023",
+        "earnings2024",
+        "earnings2025"
+      ],
+      "inflectionPoints": [
+        {
+          "id": "rooms_2024",
+          "period": "2024",
+          "title": "Ecosystem expansion peaks",
+          "change": "Annual net room growth accelerates from 4.7% to 6.8% in FY2024, then slows to over 4.3% in FY2025.",
+          "cause": "The analysis cites record gross additions, conversions and new offerings including the MGM Collection; individual deal contributions are not broken out.",
+          "sourceId": "analysis56",
+          "display": true
+        }
+      ],
+      "valueQualifiers": [
+        null,
+        null,
+        null,
+        null,
+        "over"
+      ],
+      "comparisonQualifier": "Lower bound",
+      "totalRooms": [
+        1479179,
+        1525407,
+        1597380,
+        1700000,
+        1780000
+      ],
+      "totalRoomQualifiers": [
+        null,
+        null,
+        null,
+        "over",
+        "nearly"
+      ],
+      "notes": [
+        "Net room growth excludes hotels that left the system. FY2025 is over 4.3%; the chart plots its disclosed lower bound.",
+        "Year-end rooms: FY2021 1,479,179; FY2022 1,525,407; FY2023 1,597,380; FY2024 over 1.7M; FY2025 nearly 1.78M. Counts are supporting context, not the charted growth rate."
+      ]
+    },
+    {
+      "id": "operating_margin",
+      "name": "Operating Margin",
+      "shortName": "Operating Margin",
+      "icon": "coins",
+      "chart": {
+        "max": 20,
+        "colors": [
+          "#285a78"
+        ]
+      },
+      "title": "Operating Margin",
+      "description": "Reported operating income ÷ total revenue (%)",
+      "classification": "lagging",
+      "unit": "percent",
+      "unitLabel": "Operating margin (%)",
+      "decimals": 1,
+      "chartType": "line",
+      "primary": false,
+      "baselinePeriod": "2021",
+      "favorableDirection": "increase",
+      "status": "calculated",
+      "values": [
+        12.6,
+        16.7,
+        16.3,
+        15,
+        15.8
+      ],
+      "sources": [
+        "analysis56",
+        "earnings2021",
+        "earnings2022",
+        "earnings2023",
+        "earnings2025"
+      ],
+      "inflectionPoints": [
+        {
+          "id": "margin_2024",
+          "period": "2024",
+          "title": "Reported margin dips as rooms expand",
+          "change": "Operating margin falls from 16.3% in FY2023 to 15.0% in FY2024, then recovers to 15.8% in FY2025.",
+          "cause": "The analysis identifies higher general, administrative and restructuring charges; the adjusted fee business improved despite the reported-margin decline.",
+          "sourceId": "analysis56",
+          "display": true
+        }
+      ],
+      "operatingIncome": [
+        1750,
+        3462,
+        3864,
+        3767,
+        4141
+      ],
+      "totalRevenue": [
+        13857,
+        20773,
+        23713,
+        25100,
+        26186
+      ],
+      "inputUnit": "USD millions",
+      "estimationMethodology": "Calculated, not estimated: operating income / total revenues × 100, rounded to one decimal. FY2024 uses the prior-year column of the FY2025 release, as specified in the analysis.",
+      "notes": [
+        "Reported revenue includes owner cost reimbursements at little profit. This margin is not the adjusted fee-business operating margin.",
+        "The detailed KPI analysis classifies operating margin as lagging, despite a conflicting leading label in the presentation overview."
+      ]
+    }
   ]
 };
 // Optional metric configuration: comparison:'relative'|'absolute'|'points', chart:{min,max,beginAtZero,colors},
@@ -192,8 +753,12 @@ function formatKPIValue(metric,value) {
   if (!finite(value)) return 'Not available';
   const digits = metric.decimals ?? 1;
   if (metric.unit === 'usd') return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:digits,maximumFractionDigits:digits}).format(value);
-  if (metric.unit === 'percent') return number(value,digits)+'%';
+  if (metric.unit === 'percent') return (metric.signedValues&&value>0?'+':'')+number(value,digits)+'%';
   return number(value,digits)+(metric.unit === 'millions'?'M':metric.valueSuffix || '');
+}
+function formatObservation(metric,value,index) {
+  const qualifier=metric.valueQualifiers?.[index];
+  return (finite(value)&&qualifier?qualifier+' ':'')+formatKPIValue(metric,value);
 }
 function textElement(tag,text,className) { const el=document.createElement(tag); el.textContent=text; if(className) el.className=className; return el; }
 function sourceFor(id) { return KPI_DATA.sources.find(source=>source.id===id); }
@@ -215,7 +780,7 @@ function calculateKPIChange(metric) {
   const absolute=comparable?latest-baseline:null;
   const relative=comparable&&baseline!==0?absolute/Math.abs(baseline)*100:null;
   const favorable=absolute===null||absolute===0||!['increase','decrease'].includes(metric.favorableDirection)?null:(metric.favorableDirection==='increase'?absolute>0:absolute<0);
-  return {baseline,latest,latestPeriod:periods[latestIndex],absolute,relative,favorable};
+  return {baseline,latest,baselineIndex,latestIndex,latestPeriod:periods[latestIndex],absolute,relative,favorable};
 }
 function formatChange(metric,result) {
   if(result.absolute===null) return 'Comparison unavailable';
@@ -223,7 +788,7 @@ function formatChange(metric,result) {
   const mode=metric.comparison || (metric.unit==='percent'?'points':'absolute');
   if(mode==='points') return sign+number(result.absolute,metric.decimals??1)+' pp';
   if(mode==='relative') return result.relative===null?'Relative change unavailable':(result.relative>0?'+':'')+number(result.relative,metric.changeDecimals??1)+'%';
-  return sign+formatKPIValue(metric,result.absolute)+(result.relative===null?'':' ('+(result.relative>0?'+':'')+number(result.relative,1)+'%)');
+  return sign+formatKPIValue({...metric,signedValues:false},result.absolute)+(result.relative===null?'':' ('+(result.relative>0?'+':'')+number(result.relative,1)+'%)');
 }
 
 // SECTION 4 · KPI CARD RENDERER
@@ -234,7 +799,9 @@ function renderKPICards() {
     const top=textElement('div','','card-top'); top.append(textElement('span',metric.classification,'classification'),textElement('span','· '+statusLabel(metric.status),'status'));
     const performance=result.favorable===null?'neutral':result.favorable?'favorable':'unfavorable';
     const arrow=result.absolute===null||result.absolute===0?'—':result.absolute>0?'▲':'▼';
-    card.append(top,textElement('h3',metric.shortName || metric.name),textElement('div',formatKPIValue({...metric,decimals:metric.summaryDecimals??metric.decimals},result.latest),'value'),textElement('div',result.latestPeriod?'FY'+result.latestPeriod+' · '+metric.unitLabel:'No available observation','latest-period'),textElement('div',arrow+' '+formatChange(metric,result),'change '+performance),textElement('div','vs. '+metric.baselinePeriod+' ('+formatKPIValue(metric,result.baseline)+')','baseline'));
+    const qualifiedComparison=result.absolute!==null&&(metric.comparisonQualifier || (metric.valueQualifiers?.[result.baselineIndex]?'Approximate':null));
+    card.append(top,textElement('h3',metric.shortName || metric.name),textElement('div',formatObservation({...metric,decimals:metric.summaryDecimals??metric.decimals},result.latest,result.latestIndex),'value'),textElement('div',result.latestPeriod?'FY'+result.latestPeriod+' · '+metric.unitLabel:'No available observation','latest-period'),textElement('div',arrow+' '+formatChange(metric,result)+(qualifiedComparison?' · '+qualifiedComparison:''),'change '+performance),textElement('div','vs. '+metric.baselinePeriod+' ('+formatObservation(metric,result.baseline,result.baselineIndex)+')','baseline'));
+    if(metric.snapshot) { card.querySelector('.change').textContent='222M digital room nights'; card.querySelector('.change').className='change neutral'; card.querySelector('.baseline').textContent='FY2024 · 5% volume growth YoY'; }
     card.setAttribute('aria-label',metric.name+': '+formatKPIValue(metric,result.latest)+'; '+performance+' change; latest period '+(result.latestPeriod || 'unavailable'));
     container.append(card);
   });
@@ -249,20 +816,29 @@ function createChartConfig(metric) {
   const base={borderWidth:type==='bar'?0:2,spanGaps:false,tension:.2,pointRadius:3.5,pointHoverRadius:6,pointBackgroundColor:colors[0],pointBorderWidth:0,borderRadius:type==='bar'?3:0,maxBarThickness:48};
   const datasets=stacked?(metric.series || []).map((series,i)=>({...base,label:series.label,data:periods.map((_,j)=>finite(series.values?.[j])?series.values[j]:null),backgroundColor:series.color || colors[i%colors.length],borderColor:series.color || colors[i%colors.length]})):[{...base,label:metric.name,data:doughnut?(metric.doughnutValues || values).map(v=>finite(v)?v:null):values,borderColor:doughnut?'#fff':colors[0],backgroundColor:doughnut?colors:type==='line'?'#416c9110':colors[0],fill:false}];
   const labels=doughnut?(metric.doughnutLabels || periods):periods;
-  const options={responsive:true,maintainAspectRatio:false,animation:false,locale:'en-US',layout:{padding:{top:28,right:8}},plugins:{legend:{display:doughnut||stacked,position:'bottom',labels:{boxWidth:12,font:{size:chartFontSize()}}},tooltip:{titleFont:{size:chartFontSize()},bodyFont:{size:chartFontSize()},footerFont:{size:chartFontSize()},backgroundColor:'#172d43',padding:12,callbacks:{label:context=>context.dataset.label+': '+formatKPIValue(metric,context.raw),afterBody:items=>{if(doughnut) return []; const period=periods[items[0]?.dataIndex]; return visibleInflections(metric).filter(point=>point.period===period).flatMap(point=>[point.title,'Change: '+point.change,'Likely cause: '+point.cause]);}}},annotation:{annotations:doughnut?{}:createInflectionAnnotations(metric)}}};
-  if(doughnut) options.cutout='66%';
+  const options={responsive:true,maintainAspectRatio:false,animation:false,locale:'en-US',layout:{padding:{top:28,right:8}},plugins:{legend:{display:doughnut||stacked,position:'bottom',labels:{boxWidth:12,font:{size:chartFontSize()}}},tooltip:{titleFont:{size:chartFontSize()},bodyFont:{size:chartFontSize()},footerFont:{size:chartFontSize()},backgroundColor:'#172d43',padding:12,callbacks:{label:context=>context.dataset.label+': '+formatObservation(metric,context.raw,context.dataIndex),afterBody:items=>{if(doughnut) return []; const period=periods[items[0]?.dataIndex]; return visibleInflections(metric).filter(point=>point.period===period).flatMap(point=>[point.title,'Change: '+point.change,'Likely cause: '+point.cause]);}}},annotation:{annotations:doughnut?{}:createInflectionAnnotations(metric)}}};
+  if(doughnut) { options.cutout='66%'; options.layout.padding=0; if(metric.id==='digital_adoption') options.plugins.legend.display=false; }
   else options.scales={x:{stacked,title:{display:true,text:'Fiscal year'},grid:{display:false},ticks:{color:'#596674',font:{size:chartFontSize()}}},y:{stacked,beginAtZero:metric.chart?.beginAtZero ?? true,min:metric.chart?.min,max:metric.chart?.max,title:{display:true,text:metric.unitLabel},border:{display:false},grid:{color:'#e9edef'},ticks:{color:'#596674',maxTicksLimit:6,callback:value=>formatKPIValue(metric,value),font:{size:chartFontSize()}}}};
   if(!doughnut) { options.scales.x.title.display=false; options.scales.y.title.display=false; options.scales.y.ticks.callback=value=>metric.unit==='millions'?number(value,metric.decimals===0?0:1):metric.unit==='usd'?'$'+number(value,0):number(value,0)+'%'; }
-  return {type,data:{labels,datasets},options,plugins:doughnut||stacked?[]:[createValueLabels(metric)]};
+  return {type,data:{labels,datasets},options,plugins:doughnut?(metric.centerLabel?[createDoughnutCenter(metric)]:[]):stacked?[]:[createValueLabels(metric)]};
 }
 // Small native Chart.js plugin for the reference's always-visible value labels.
+function createDoughnutCenter(metric) {
+  return {id:'doughnutCenter',afterDraw(chart) {
+    const arc=chart.getDatasetMeta(0).data[0]; if(!arc)return;
+    const ctx=chart.ctx; ctx.save(); ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle='#14253e'; ctx.font='700 30px system-ui';
+    ctx.fillText(metric.centerLabel,arc.x,arc.y-8);
+    ctx.font='14px system-ui'; ctx.fillText('Digital',arc.x,arc.y+19); ctx.restore();
+  }};
+}
 function createValueLabels(metric) {
   return {id:'metricValueLabels',afterDatasetsDraw(chart) {
     const ctx=chart.ctx; ctx.save(); ctx.font='600 '+chartFontSize()+'px system-ui'; ctx.fillStyle='#14253e'; ctx.textAlign='center';
     chart.getDatasetMeta(0).data.forEach((element,index)=>{
       const value=chart.data.datasets[0].data[index]; if(!finite(value))return;
-      const label=metric.unit==='millions'?number(value,metric.decimals??1):formatKPIValue(metric,value);
-      ctx.fillText(label,element.x,element.y-9);
+      const label=(metric.valueQualifiers?.[index]==='over'?'>':metric.valueQualifiers?.[index]==='nearly'?'≈':'')+(metric.unit==='millions'?number(value,metric.decimals??1):formatKPIValue(metric,value));
+      ctx.fillText(label+(metric.valueStatuses?.[index]==='estimated'?' est.':''),element.x,element.y-9);
     }); ctx.restore();
   }};
 }
@@ -294,7 +870,7 @@ function renderInflectionNotes(metric,panel) {
   visibleInflections(metric).forEach(point=>{
     const note=textElement('div','','annotation-note');
     note.append(textElement('strong','FY'+point.period+' → '+point.title),textElement('p','What changed → '+point.change),textElement('p','Likely cause → '+point.cause));
-    const source=sourceFor(point.sourceId),evidence=textElement('p','Evidence: ');
+    const source=sourceFor(point.sourceId),evidence=textElement('p','Evidence: ','evidence');
     const link=sourceLink(source); evidence.append(link || document.createTextNode(source?source.name+' · '+statusLabel(source.status):'Pending supporting source'));
     note.append(evidence); notes.append(note);
   });
@@ -316,15 +892,53 @@ function renderKPICharts() {
     heading.append(createIcon(metric.icon),titleGroup,textElement('span',statusLabel(metric.status),'badge')); panel.append(heading);
     const periods=periodsFor(metric);
     panel.append(textElement('div',metric.unitLabel+' · '+periods.map(p=>'FY'+p).join(' / '),'chart-meta'));
+    if(metric.supportingCharts?.length)panel.append(textElement('h4','Annual digital booking share — % of systemwide room nights'));
     const wrap=textElement('div','','canvas-wrap'),canvas=document.createElement('canvas'); canvas.setAttribute('role','img'); canvas.setAttribute('aria-labelledby',title.id); canvas.textContent=metric.title+'; exact values are available in the data table below.'; wrap.append(canvas); panel.append(wrap);
     document.getElementById('all-charts').append(panel);
-    if(librariesReady) { try { chartInstances.push(new Chart(canvas,createChartConfig(metric))); } catch(error) { wrap.replaceChildren(textElement('p','Unable to render chart: '+error.message,'error')); console.error(error); } }
+    if(!(metric.values || []).some(finite)) {
+      wrap.replaceChildren(textElement('p','Annual data not supplied. No values or dated inflection points are plotted. See Sources & methodology for the available documentation.','empty-chart'));
+    }
+    else if(librariesReady) { try { chartInstances.push(new Chart(canvas,createChartConfig(metric))); } catch(error) { wrap.replaceChildren(textElement('p','Unable to render chart: '+error.message,'error')); console.error(error); } }
     else { wrap.replaceChildren(textElement('p','Chart dependencies could not load. Connect to the internet and reload to display charts. Values and explanations remain available below.','error')); }
+    if(metric.id==='digital_adoption') {
+      const legend=textElement('div','','digital-legend');
+      metric.doughnutLabels.forEach((label,i)=>{const item=textElement('span',metric.doughnutValues[i]+'% '+label); const swatch=textElement('span','','digital-swatch'); swatch.style.backgroundColor=metric.chart.colors[i]; swatch.setAttribute('aria-hidden','true'); item.prepend(swatch); legend.append(item);}); panel.append(legend);
+    }
     renderInflectionNotes(metric,panel);
-    const details=document.createElement('details'); details.append(textElement('summary','View underlying values & data classification'));
+    (metric.notes || []).forEach(note=>panel.append(textElement('p',note,'metric-note')));
+    renderSupportingCharts(metric,panel,librariesReady);
+    const details=document.createElement('details'); details.append(textElement('summary',metric.contextObservations?.length?'View all KPI evidence, sources & classification':'View underlying values & data classification'));
     const table=document.createElement('table'),thead=document.createElement('thead'),headRow=document.createElement('tr'); ['Fiscal year',metric.unitLabel,'Classification'].forEach(label=>headRow.append(textElement('th',label))); thead.append(headRow); table.append(thead);
-    const tbody=document.createElement('tbody'); periods.forEach((period,i)=>{const row=document.createElement('tr'); row.append(textElement('td','FY'+period),textElement('td',formatKPIValue(metric,metric.values?.[i])),textElement('td',statusLabel(metric.valueStatuses?.[i] || metric.status))); tbody.append(row);}); table.append(tbody); details.append(table); panel.append(details);
+    const tbody=document.createElement('tbody'); periods.forEach((period,i)=>{const row=document.createElement('tr'); row.append(textElement('td','FY'+period),textElement('td',formatObservation(metric,metric.values?.[i],i)),textElement('td',finite(metric.values?.[i])?statusLabel(metric.valueStatuses?.[i] || metric.status):statusLabel('unavailable'))); tbody.append(row);}); table.append(tbody); details.append(table); renderContextObservations(metric,details); panel.append(details);
+    if(metric.operatingIncome&&metric.totalRevenue) {
+      const inputs=document.createElement('details');inputs.append(textElement('summary','View operating margin calculation inputs ('+metric.inputUnit+')'));
+      const inputTable=document.createElement('table'),inputHead=document.createElement('tr');['Fiscal year','Operating income','Total revenue'].forEach(label=>inputHead.append(textElement('th',label)));inputTable.append(inputHead);
+      periods.forEach((period,i)=>{const row=document.createElement('tr');row.append(textElement('td','FY'+period),textElement('td',number(metric.operatingIncome[i],0)),textElement('td',number(metric.totalRevenue[i],0)));inputTable.append(row);});inputs.append(inputTable);panel.append(inputs);
+    }
   });
+}
+
+// Supporting measures use separate axes and units.
+function renderSupportingCharts(metric,panel,librariesReady) {
+  (metric.supportingCharts || []).forEach(supporting=>{
+    panel.append(textElement('h4',supporting.title),textElement('p',supporting.description,'metric-note'));
+    const wrap=textElement('div','','canvas-wrap'),canvas=document.createElement('canvas');
+    const description=supporting.periods.map((period,i)=>'FY'+period+': '+formatObservation(supporting,supporting.values[i],i)+(supporting.valueStatuses?.[i]==='estimated'?' (est.)':'')).join(' · ');
+    canvas.setAttribute('role','img');canvas.setAttribute('aria-label',supporting.title+'; '+description);wrap.append(canvas);panel.append(wrap);
+    if(librariesReady)chartInstances.push(new Chart(canvas,createChartConfig(supporting)));
+    else wrap.replaceChildren(textElement('p',description,'metric-note'));
+  });
+}
+
+// Related evidence is kept separate when its measure or reporting window differs.
+function renderContextObservations(metric,panel) {
+  if(!(metric.contextObservations || []).length)return;
+  const evidence=document.createElement('div'); evidence.append(textElement('h4','Supporting volume & growth observations'));
+  metric.contextObservations.forEach(observation=>{
+    const record=textElement('div','','annotation-note');
+    record.append(textElement('strong',observation.period+' · '+observation.measure),textElement('p',observation.value),textElement('p','Change: '+observation.change),textElement('p','Classification: '+statusLabel(observation.status || metric.status)));
+    const source=sourceFor(observation.sourceId),citation=textElement('p','Source: ');citation.append(sourceLink(source)||document.createTextNode(source?.name || 'Not supplied'));record.append(citation);evidence.append(record);
+  });panel.append(evidence);
 }
 
 // SECTION 8 · SOURCE RENDERER
@@ -337,7 +951,8 @@ function renderSources() {
     if(!(metric.sources || []).length) content.append(textElement('p','Source not yet supplied.'));
     (metric.sources || []).forEach(id=>{
       const source=sourceFor(id); if(!source) {content.append(textElement('p','Source reference unavailable: '+id));return;}
-      const line=textElement('p'); line.append(sourceLink(source) || document.createTextNode(source.name)); content.append(line,textElement('p','Publication / reporting date: '+(source.date || 'Not applicable — unpublished demonstration')+' · '+statusLabel(source.status)),textElement('p','URL: '+(source.url || 'Not applicable — no published source')));
+      const line=textElement('p'); line.append(sourceLink(source) || document.createTextNode(source.name)); content.append(line,textElement('p','Publication / reporting date: '+(source.date || source.dateLabel || 'Not supplied')+' · '+statusLabel(source.status)),textElement('p','URL: '+(source.url || 'Not supplied in the resource document')));
+      if(source.localPath)content.append(textElement('p','Supplied file: '+source.localPath));
       if(source.methodology) content.append(textElement('p','Methodology: '+source.methodology));
     });
     if(metric.estimationMethodology) content.append(textElement('p','KPI estimation method: '+metric.estimationMethodology));
