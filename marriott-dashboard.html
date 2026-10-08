@@ -63,20 +63,68 @@
     @media(max-width:480px) { .cards { grid-template-columns:repeat(2,minmax(0,1fr)); } .card { padding:15px 12px; } .value { font-size:26px; } .chart-heading { flex-direction:column; gap:7px; } }
     @media print { main { padding:0; } .chart-panel,.card { break-inside:avoid; box-shadow:none; } details { display:none; } }
   </style>
+  <style>
+    /* Executive mockup presentation; all chart data remains in KPI_DATA. */
+    :root { --paper:#fbfcfd; --navy:#14253e; --blue:#285a78; --green:#31824a; --burgundy:#942c44; --border:#dde5ed; --radius:5px; --space:14px; }
+    main { max-width:1600px; padding:0 18px 24px; }
+    header { margin:0 -18px; padding:0; border:0; }
+    .brand-banner { display:grid; grid-template-columns:260px 1fr 190px; align-items:center; min-height:110px; background:linear-gradient(105deg,#101a21 0%,#132d40 52%,#53687b 100%); color:white; }
+    .wordmark { padding:16px 25px; border-right:1px solid #ffffff21; text-align:center; }
+    .wordmark strong { display:block; font-family:Georgia,serif; font-size:46px; font-style:italic; letter-spacing:-2px; line-height:1; }
+    .wordmark span { display:block; font-size:11px; letter-spacing:3px; margin-top:7px; text-transform:uppercase; }
+    .banner-copy { padding:18px 22px; }
+    .banner-copy h1 { font:clamp(22px,2.4vw,34px)/1.2 Georgia,serif; letter-spacing:0; margin:0 0 7px; }
+    .banner-copy p { font-size:17px; margin:0; color:#e0e7ef; }
+    .brand-promise { font-size:14px; letter-spacing:1px; line-height:1.25; font-weight:650; padding:20px; }
+    .dashboard-nav { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:0 28px; border-bottom:1px solid var(--border); background:white; }
+    .nav-links { display:flex; gap:24px; } .nav-links a { padding:15px 0 10px; color:var(--muted); text-decoration:none; font-size:12px; border-bottom:3px solid transparent; } .nav-links a.active { color:var(--navy); border-color:var(--blue); font-weight:700; }
+    .period { margin:0; font-size:12px; }
+    .notice-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:12px 0; }
+    #data-notice { padding:4px 9px; max-width:none; font-size:10px; }
+    .eyebrow { font-size:9px; letter-spacing:.06em; }
+    .executive-summary { display:grid; grid-template-columns:minmax(240px,1.8fr) minmax(0,6fr); background:#f1f5f8; border:1px solid var(--border); border-radius:5px; padding:20px 12px; margin-bottom:14px; }
+    .summary-intro { padding:0 18px 0 8px; } .summary-intro h2 { font:700 27px/1.08 Georgia,serif; margin-bottom:12px; letter-spacing:-.6px; }
+    .thesis { font-size:12px; margin:0; line-height:1.45; }
+    .cards { gap:0; } .card { border:0; border-left:1px solid var(--border); border-radius:0; background:transparent; box-shadow:none; padding:8px 14px; }
+    .card h3 { margin:0 0 7px; min-height:30px; font-size:12px; } .value { font:700 33px/1.1 Georgia,serif; letter-spacing:-1px; }
+    .change { font-size:15px; margin-top:10px; } .baseline { font-size:11px; margin-top:0; padding-top:5px; }
+    .card-top { order:5; margin-top:10px; } .classification,.status { font-size:9px; } .latest-period { display:none; }
+    .chart-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .chart-panel { padding:15px 16px 12px; box-shadow:none; background:linear-gradient(180deg,#fff,#fbfcfd); }
+    .chart-heading { gap:9px; justify-content:flex-start; } .chart-heading h3,.primary h3 { font:16px/1.25 Georgia,serif; margin:0 0 3px; }
+    .chart-heading p { font-size:11px; } .chart-heading .badge { margin-left:auto; padding:2px 4px; font-size:8px; white-space:nowrap; }
+    .metric-icon { width:27px; height:29px; flex-shrink:0; color:var(--navy); }
+    .chart-meta { display:none; } .canvas-wrap,.primary .canvas-wrap { height:225px; margin-top:14px; }
+    .annotation-notes { gap:6px; margin-top:8px; } .annotation-note { padding:6px 9px; font-size:10px; line-height:1.4; } .annotation-note p { margin:2px 0; }
+    .annotation-note .evidence { display:none; }
+    details { font-size:10px; margin-top:8px; }
+    .insight-grid { display:grid; grid-template-columns:1.1fr 1.1fr 1fr; gap:14px; margin-top:14px; }
+    .insight-panel { padding:16px; border:1px solid var(--border); border-radius:5px; background:#fff; }
+    .insight-panel h2 { font:16px Georgia,serif; margin:0 0 14px; display:flex; align-items:center; gap:10px; }
+    .insight-panel ol { list-style:none; counter-reset:insight; margin:0; padding:0; } .insight-panel ol li { counter-increment:insight; display:flex; gap:13px; align-items:flex-start; margin-bottom:13px; }
+    .insight-panel ol li::before { content:counter(insight); border-radius:50%; color:#fff; background:var(--blue); min-width:29px; height:29px; display:grid; place-items:center; font-size:16px; }
+    .insight-panel li { font-size:12px; line-height:1.4; color:var(--muted); } .insight-panel ul { padding-left:20px; margin:0; } .insight-panel ul li { margin-bottom:7px; }
+    .insight-disclaimer { font-size:10px; color:var(--burgundy); margin:0 0 12px; }
+    .sources-panel { margin-top:14px; padding:18px; }
+    html { scroll-behavior:smooth; scroll-padding-top:15px; }
+    @media(max-width:1279px) { .executive-summary { grid-template-columns:250px 1fr; } .cards { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:16px; } .chart-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .brand-banner { grid-template-columns:230px 1fr 150px; } }
+    @media(max-width:1000px) { .chart-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .insight-grid { grid-template-columns:1fr; } .brand-banner { grid-template-columns:200px 1fr; } .brand-promise { display:none; } .wordmark strong { font-size:36px; } }
+    @media(max-width:760px) { .executive-summary { grid-template-columns:1fr; } .summary-intro { margin-bottom:18px; } .chart-grid { grid-template-columns:1fr; } .brand-banner { grid-template-columns:1fr; } .wordmark { border:0; text-align:left; padding:18px 20px 0; } .banner-copy { padding:14px 20px 20px; } .banner-copy p { font-size:14px; } .dashboard-nav { flex-direction:column; align-items:flex-start; gap:8px; padding:0 16px 10px; } .nav-links { gap:16px; flex-wrap:wrap; } .notice-row { flex-direction:column; align-items:flex-start; } .canvas-wrap,.primary .canvas-wrap { height:250px; } }
+    @media(max-width:480px) { .cards { grid-template-columns:repeat(2,minmax(0,1fr)); } .chart-heading { flex-direction:row; } .value { font-size:30px; } .card { padding:8px 10px; } .summary-intro h2 { font-size:25px; } }
+  </style>
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 </head>
 <body>
 <main>
-  <header>
-    <div class="eyebrow" id="project-label"></div>
-    <div class="heading-row"><div><h1 id="company-name"></h1><p class="subtitle" id="dashboard-title"></p><div class="period" id="reporting-period"></div></div><div id="data-notice" class="badge" role="status"></div></div>
-    <p class="thesis" id="thesis"></p>
+  <header><div class="brand-banner"><div class="wordmark" aria-label="Marriott International"><strong>Marriott</strong><span>International</span></div><div class="banner-copy"><h1 id="dashboard-title"></h1><p id="banner-subtitle"></p><span id="company-name" class="sr-only"></span></div><div class="brand-promise" id="brand-promise"></div></div>
+    <nav class="dashboard-nav" aria-label="Dashboard sections"><div class="nav-links"><a class="active" href="#executive-view">Executive View</a><a href="#kpi-trends">KPI Trends</a><a href="#key-insights">Key Insights</a><a href="#data-sources">Data Sources</a></div><div class="period" id="reporting-period"></div></nav>
   </header>
-  <section aria-labelledby="summary-heading"><div class="section-heading"><h2 id="summary-heading">Performance at a glance</h2><p>Latest available observation · change from baseline</p></div><div id="kpi-cards" class="cards"></div></section>
-  <section aria-labelledby="primary-heading"><div class="section-heading"><h2 id="primary-heading">Transformation focus</h2><p>Historical performance & inflection points</p></div><div id="primary-charts"></div></section>
-  <section aria-labelledby="supporting-heading"><div class="section-heading"><h2 id="supporting-heading">Supporting indicators</h2><p>Leading capabilities and lagging business outcomes</p></div><div id="supporting-charts" class="chart-grid"></div></section>
-  <section class="sources-panel" aria-labelledby="sources-heading"><h2 id="sources-heading">Sources & methodology</h2><div id="methodology" class="methodology"></div><div id="sources" class="source-list"></div></section>
+  <div class="notice-row"><div class="eyebrow" id="project-label"></div><div id="data-notice" class="badge" role="status"></div></div>
+  <section id="executive-view" class="executive-summary" aria-labelledby="summary-heading"><div class="summary-intro"><h2 id="summary-heading"></h2><p class="thesis" id="thesis"></p></div><div id="kpi-cards" class="cards"></div></section>
+  <section id="kpi-trends" aria-label="KPI trends"><div id="all-charts" class="chart-grid"></div></section>
+  <section id="key-insights" class="insight-grid" aria-label="Key insights"></section>
+  <section id="data-sources" class="sources-panel" aria-labelledby="sources-heading"><h2 id="sources-heading">Sources & methodology</h2><div id="methodology" class="methodology"></div><div id="sources" class="source-list"></div></section>
   <footer><span id="footer-project"></span><span id="footer-status"></span></footer>
   <noscript><p class="error">Enable JavaScript to display the dashboard.</p></noscript>
 </main>
@@ -85,8 +133,10 @@
 // SECTION 1 · DATA CONFIGURATION — edit this object to replace the illustrative dataset.
 const KPI_DATA = {
   company: {
-    name: 'Marriott International', title: 'Digital Transformation Performance Dashboard',
-    thesis: 'Marriott is expanding its digital and loyalty ecosystem to strengthen direct customer relationships, improve operational performance, and support profitable growth.',
+    name: 'Marriott International', title: 'Digital Transformation Dashboard',
+    bannerSubtitle: 'Loyalty. Direct. Digital. A Stronger Tomorrow.', brandPromise: 'PEOPLE · PLACES · POSSIBILITIES',
+    summaryTitle: 'Transforming Travel for What’s Next',
+    thesis: 'Marriott is leveraging digital platforms, data, and the power of Marriott Bonvoy to create deeper guest relationships, drive direct demand, and deliver profitable, asset-light growth.',
     reportingPeriod: 'FY2021–FY2025', dataStatus: 'illustrative',
     project: 'University of South Florida · Graduate Digital Transformation',
     statusLabels: { placeholder: 'Placeholder', estimated: 'Estimated', reported: 'Reported' },
@@ -97,21 +147,26 @@ const KPI_DATA = {
       'Worldwide Room Growth is represented here by total worldwide rooms in millions, not an annual growth rate. Illustrative annotation explanations demonstrate the format only; they do not establish causation.'
     ]
   },
+  insights: [
+    {title:'What the Data Suggests',icon:'bulb',numbered:true,disclaimer:'Illustrative interpretation of mock data only.',items:['The mock loyalty and digital series expand alongside direct bookings, demonstrating how customer engagement indicators can be compared.','The mock RevPAR series rises from its baseline, then moderates in the final year.','The mock operating margin series improves; any explanation involving technology or scale requires supporting evidence.']},
+    {title:'Key Management Questions',icon:'target',numbered:false,items:['Can direct booking share continue to grow as online travel agencies invest in loyalty and pricing?','How does Bonvoy membership translate into revenue per member and retention?','What is the optimal balance between room growth and margin expansion?','How will AI, personalization, and dynamic pricing influence the next phase of value?']},
+    {title:'Next Steps',icon:'trend',numbered:true,items:['Validate and finalize KPI data from filings, earnings releases, and investor presentations.','Refine inflection point annotations with supporting evidence.','Develop strategic interpretation and executive recommendations.']}
+  ],
   periods: ['2021','2022','2023','2024','2025'],
   sources: [{ id:'demo', name:'Project demonstration dataset (synthetic)', date:null, url:null, status:'placeholder', methodology:'Manually constructed illustrative sequences for layout and functionality testing. No reported Marriott values or published causal evidence are represented.' }],
   metrics: [
-    { id:'bonvoy_members', name:'Marriott Bonvoy Membership', title:"Growth of Marriott’s Loyalty Ecosystem", description:'Membership base · a leading indicator of customer relationship reach.', classification:'leading', unit:'millions', unitLabel:'Members (millions)', decimals:0, chartType:'line', primary:true, baselinePeriod:'2021', favorableDirection:'increase', status:'placeholder', periods:['2021','2022','2023','2024','2025'], values:[150,166,188,211,235], sources:['demo'], inflectionPoints:[
-      {id:'bonvoy_2023',period:'2023',title:'Illustrative membership acceleration',change:'The synthetic series increases more quickly from this period.',cause:'Example hypothesis: greater loyalty engagement; pending evidence and verification.',sourceId:'demo',display:true},
-      {id:'bonvoy_2025',period:'2025',title:'Illustrative sustained expansion',change:'The placeholder membership base continues expanding.',cause:'Example hypothesis: broader program reach; pending evidence and verification.',sourceId:'demo',display:true},
+    { id:'bonvoy_members', name:'Marriott Bonvoy Membership', shortName:'Bonvoy Members', icon:'members', comparison:'relative', changeDecimals:0, chart:{max:250,colors:['#285a78']}, title:'Marriott Bonvoy Members', description:'Membership base · a leading indicator of customer relationship reach.', classification:'leading', unit:'millions', unitLabel:'Members (millions)', decimals:0, chartType:'bar', primary:true, baselinePeriod:'2021', favorableDirection:'increase', status:'placeholder', periods:['2021','2022','2023','2024','2025'], values:[131,160,180,206,228], sources:['demo'], inflectionPoints:[
+      {id:'bonvoy_2023',period:'2022',title:'Illustrative travel recovery',change:'The synthetic series increases more quickly from this period.',cause:'Hypothesis: post-pandemic travel recovery; unverified mockup explanation.',sourceId:'demo',display:true},
+      {id:'bonvoy_2025',period:'2025',title:'Illustrative sustained expansion',change:'The placeholder membership base continues expanding.',cause:'Example hypothesis: broader program reach; pending evidence and verification.',sourceId:'demo',display:false},
       {id:'bonvoy_hidden',period:'2022',title:'Disabled demonstration',change:'This annotation is intentionally hidden.',cause:'Used to demonstrate the visibility flag.',sourceId:'demo',display:false}
     ] },
-    { id:'direct_booking', name:'Direct Booking Percentage', title:'Direct Customer Relationships', description:'Share of bookings through direct channels.', classification:'lagging',unit:'percent',unitLabel:'Direct bookings (%)',decimals:1,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[42,44,47,49,52],sources:['demo'],inflectionPoints:[] },
-    { id:'digital_adoption',name:'Digital Booking Adoption',title:'Adoption of Digital Booking Channels',description:'Share of bookings completed through digital channels.',classification:'leading',unit:'percent',unitLabel:'Digital bookings (%)',decimals:1,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[35,41,null,53,59],sources:['demo'],inflectionPoints:[
-      {id:'digital_2024',period:'2024',title:'Illustrative adoption step-up',change:'The next available synthetic observation shows higher adoption; FY2023 is missing.',cause:'Example hypothesis: improved digital convenience; pending evidence and verification.',sourceId:'demo',display:true}
+    { id:'direct_booking', name:'Direct Booking Percentage', shortName:'Direct Bookings',icon:'link',chart:{min:20,max:80,colors:['#285a78']},title:'Direct Booking Percentage', description:'Share of bookings through direct channels.', classification:'lagging',unit:'percent',unitLabel:'% of room nights',decimals:0,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[42,48,52,56,58],sources:['demo'],inflectionPoints:[{id:'direct_2023',period:'2023',title:'Illustrative app experience',change:'Mock direct booking share reaches 52%.',cause:'Hypothesis: enhanced app experience and personalized offers; unverified.',sourceId:'demo',display:true}] },
+    { id:'digital_adoption',name:'Digital Booking Adoption',shortName:'Digital Bookings',icon:'phone',chart:{min:20,max:100,colors:['#285a78']},title:'Digital Booking Adoption',description:'Share of bookings completed through digital channels.',classification:'leading',unit:'percent',unitLabel:'% of room nights booked digitally',decimals:0,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[55,61,66,70,72],sources:['demo'],inflectionPoints:[
+      {id:'digital_2024',period:'2024',title:'Illustrative adoption step-up',change:'The mock series reaches 70% digital adoption in FY2024.',cause:'Example hypothesis: improved digital convenience; pending evidence and verification.',sourceId:'demo',display:true}
     ] },
-    { id:'revpar',name:'Revenue per Available Room',title:'Room Revenue Productivity',description:'Illustrative revenue per available room in US dollars.',classification:'lagging',unit:'usd',unitLabel:'RevPAR (USD)',decimals:2,chartType:'bar',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[82,108,121,128,134],sources:['demo'],inflectionPoints:[] },
-    { id:'room_growth',name:'Worldwide Room Growth',title:'Worldwide Room Portfolio — Total Rooms',description:'Portfolio size: total rooms, not the annual room growth rate.',classification:'leading',unit:'millions',unitLabel:'Total worldwide rooms (millions)',decimals:2,chartType:'bar',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[1.40,1.46,1.53,1.62,1.71],sources:['demo'],inflectionPoints:[] },
-    { id:'operating_margin',name:'Operating Margin',title:'Operating Profitability',description:'Illustrative operating income as a percentage of revenue.',classification:'lagging',unit:'percent',unitLabel:'Operating margin (%)',decimals:1,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[11,14,16,17,18],sources:['demo'],inflectionPoints:[] }
+    { id:'revpar',name:'Revenue per Available Room',shortName:'RevPAR',icon:'bars',comparison:'relative',changeDecimals:0,chart:{max:200,colors:['#4c866c']},title:'Revenue per Available Room (RevPAR)',description:'Illustrative revenue per available room in US dollars.',classification:'lagging',unit:'usd',unitLabel:'RevPAR (USD)',decimals:0,chartType:'bar',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[101,123,129,135,131],sources:['demo'],inflectionPoints:[{id:'revpar_2022',period:'2022',title:'Illustrative demand recovery',change:'Mock RevPAR rises to $123.',cause:'Hypothesis: stronger leisure demand; unverified.',sourceId:'demo',display:true}] },
+    { id:'room_growth',name:'Worldwide Room Growth',shortName:'Worldwide Rooms',icon:'bed',comparison:'relative',changeDecimals:0,summaryDecimals:1,chart:{max:2,colors:['#657f91']},title:'Worldwide Room Growth',description:'Portfolio size: total rooms, not the annual room growth rate.',classification:'leading',unit:'millions',unitLabel:'Total worldwide rooms (millions)',decimals:2,chartType:'bar',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[1.45,1.52,1.60,1.66,1.70],sources:['demo'],inflectionPoints:[] },
+    { id:'operating_margin',name:'Operating Margin',shortName:'Operating Margin',icon:'coins',chart:{max:30,colors:['#285a78']},title:'Operating Margin',description:'Illustrative operating income as a percentage of revenue.',classification:'lagging',unit:'percent',unitLabel:'Operating margin (%)',decimals:1,chartType:'line',primary:false,baselinePeriod:'2021',favorableDirection:'increase',status:'placeholder',values:[11.8,15.2,16.8,18.1,18.4],sources:['demo'],inflectionPoints:[{id:'margin_2023',period:'2023',title:'Illustrative efficiency gains',change:'Mock operating margin reaches 16.8%.',cause:'Hypothesis: cost discipline and digital efficiency; unverified.',sourceId:'demo',display:true}] }
   ]
 };
 // Optional metric configuration: comparison:'relative'|'absolute'|'points', chart:{min,max,beginAtZero,colors},
@@ -157,7 +212,7 @@ function formatChange(metric,result) {
   const sign=result.absolute>0?'+':'';
   const mode=metric.comparison || (metric.unit==='percent'?'points':'absolute');
   if(mode==='points') return sign+number(result.absolute,metric.decimals??1)+' pp';
-  if(mode==='relative') return result.relative===null?'Relative change unavailable':(result.relative>0?'+':'')+number(result.relative,1)+'%';
+  if(mode==='relative') return result.relative===null?'Relative change unavailable':(result.relative>0?'+':'')+number(result.relative,metric.changeDecimals??1)+'%';
   return sign+formatKPIValue(metric,result.absolute)+(result.relative===null?'':' ('+(result.relative>0?'+':'')+number(result.relative,1)+'%)');
 }
 
@@ -168,8 +223,9 @@ function renderKPICards() {
     const result=calculateKPIChange(metric),card=textElement('article','','card'); card.dataset.metric=metric.id;
     const top=textElement('div','','card-top'); top.append(textElement('span',metric.classification,'classification'),textElement('span','· '+statusLabel(metric.status),'status'));
     const performance=result.favorable===null?'neutral':result.favorable?'favorable':'unfavorable';
-    const arrow=result.absolute===null||result.absolute===0?'—':result.absolute>0?'↑':'↓';
-    card.append(top,textElement('h3',metric.name),textElement('div',formatKPIValue(metric,result.latest),'value'),textElement('div',result.latestPeriod?'FY'+result.latestPeriod+' · '+metric.unitLabel:'No available observation','latest-period'),textElement('div',arrow+' '+formatChange(metric,result)+' · '+(result.favorable===null?'Neutral / unavailable':result.favorable?'Favorable':'Unfavorable'),'change '+performance),textElement('div','Baseline FY'+metric.baselinePeriod+': '+formatKPIValue(metric,result.baseline),'baseline'));
+    const arrow=result.absolute===null||result.absolute===0?'—':result.absolute>0?'▲':'▼';
+    card.append(top,textElement('h3',metric.shortName || metric.name),textElement('div',formatKPIValue({...metric,decimals:metric.summaryDecimals??metric.decimals},result.latest),'value'),textElement('div',result.latestPeriod?'FY'+result.latestPeriod+' · '+metric.unitLabel:'No available observation','latest-period'),textElement('div',arrow+' '+formatChange(metric,result),'change '+performance),textElement('div','vs. '+metric.baselinePeriod+' ('+formatKPIValue(metric,result.baseline)+')','baseline'));
+    card.setAttribute('aria-label',metric.name+': '+formatKPIValue(metric,result.latest)+'; '+performance+' change; latest period '+(result.latestPeriod || 'unavailable'));
     container.append(card);
   });
 }
@@ -180,13 +236,40 @@ function createChartConfig(metric) {
   const doughnut=metric.chartType==='doughnut',stacked=['stackedBar','stacked bar','stacked-bar'].includes(metric.chartType);
   const type=doughnut?'doughnut':stacked?'bar':metric.chartType;
   const values=periods.map((_,i)=>finite(metric.values?.[i])?metric.values[i]:null);
-  const base={borderWidth:2,spanGaps:false,tension:.2,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#fff',pointBorderWidth:2,borderRadius:type==='bar'?5:0};
+  const base={borderWidth:type==='bar'?0:2,spanGaps:false,tension:.2,pointRadius:3.5,pointHoverRadius:6,pointBackgroundColor:colors[0],pointBorderWidth:0,borderRadius:type==='bar'?3:0,maxBarThickness:48};
   const datasets=stacked?(metric.series || []).map((series,i)=>({...base,label:series.label,data:periods.map((_,j)=>finite(series.values?.[j])?series.values[j]:null),backgroundColor:series.color || colors[i%colors.length],borderColor:series.color || colors[i%colors.length]})):[{...base,label:metric.name,data:doughnut?(metric.doughnutValues || values).map(v=>finite(v)?v:null):values,borderColor:doughnut?'#fff':colors[0],backgroundColor:doughnut?colors:type==='line'?'#416c9110':colors[0],fill:false}];
   const labels=doughnut?(metric.doughnutLabels || periods):periods;
   const options={responsive:true,maintainAspectRatio:false,animation:false,locale:'en-US',layout:{padding:{top:28,right:8}},plugins:{legend:{display:doughnut||stacked,position:'bottom',labels:{boxWidth:12,font:{size:11}}},tooltip:{backgroundColor:'#172d43',padding:12,callbacks:{label:context=>context.dataset.label+': '+formatKPIValue(metric,context.raw),afterBody:items=>{if(doughnut) return []; const period=periods[items[0]?.dataIndex]; return visibleInflections(metric).filter(point=>point.period===period).flatMap(point=>[point.title,'Change: '+point.change,'Likely cause: '+point.cause]);}}},annotation:{annotations:doughnut?{}:createInflectionAnnotations(metric)}}};
   if(doughnut) options.cutout='66%';
   else options.scales={x:{stacked,title:{display:true,text:'Fiscal year'},grid:{display:false},ticks:{color:'#596674',font:{size:11}}},y:{stacked,beginAtZero:metric.chart?.beginAtZero ?? true,min:metric.chart?.min,max:metric.chart?.max,title:{display:true,text:metric.unitLabel},border:{display:false},grid:{color:'#e9edef'},ticks:{color:'#596674',maxTicksLimit:6,callback:value=>formatKPIValue(metric,value),font:{size:11}}}};
-  return {type,data:{labels,datasets},options};
+  if(!doughnut) { options.scales.x.title.display=false; options.scales.y.title.display=false; options.scales.y.ticks.callback=value=>metric.unit==='millions'?number(value,metric.decimals===0?0:1):metric.unit==='usd'?'$'+number(value,0):number(value,0)+'%'; }
+  return {type,data:{labels,datasets},options,plugins:doughnut||stacked?[]:[createValueLabels(metric)]};
+}
+// Small native Chart.js plugin for the reference's always-visible value labels.
+function createValueLabels(metric) {
+  return {id:'metricValueLabels',afterDatasetsDraw(chart) {
+    const ctx=chart.ctx; ctx.save(); ctx.font='600 10px system-ui'; ctx.fillStyle='#14253e'; ctx.textAlign='center';
+    chart.getDatasetMeta(0).data.forEach((element,index)=>{
+      const value=chart.data.datasets[0].data[index]; if(!finite(value))return;
+      const label=metric.unit==='millions'?number(value,metric.decimals??1):formatKPIValue(metric,value);
+      ctx.fillText(label,element.x,element.y-9);
+    }); ctx.restore();
+  }};
+}
+
+// Inline vector icons keep the application standalone without an icon dependency.
+function createIcon(name) {
+  const paths={members:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M16 3a4 4 0 0 1 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M13 7a4 4 0 1 1-8 0a4 4 0 0 1 8 0',link:'M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2 M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2',phone:'M6 2h12v20H6z M10 18h4 M10 5h4',bars:'M3 21V14 M9 21V10 M15 21V6 M21 21V2',bed:'M2 20V5 M2 16h20v4 M2 10h20v6 M6 10V7h5v3 M13 10V7h7v3',coins:'M3 6c0-4 14-4 14 0s-14 4-14 0 M3 6v10c0 4 14 4 14 0V6 M3 11c0 4 14 4 14 0 M20 3v12 M20 3c0-2-5-3-9-2',bulb:'M9 18h6 M9 22h6 M8 15a7 7 0 1 1 8 0v3H8z M12 1V0 M2 7H0 M24 7h-2',target:'M21 12a9 9 0 1 1-9-9 M17 12a5 5 0 1 1-5-5 M12 12l10-10 M17 2h5v5',trend:'M2 18l7-7 5 4 8-11 M16 4h6v6'};
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('class','metric-icon'); svg.setAttribute('aria-hidden','true');
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path'); path.setAttribute('d',paths[name] || paths.trend); path.setAttribute('fill','none'); path.setAttribute('stroke','currentColor'); path.setAttribute('stroke-width','2'); path.setAttribute('stroke-linecap','round'); path.setAttribute('stroke-linejoin','round'); svg.append(path); return svg;
+}
+function renderInsights() {
+  const container=document.getElementById('key-insights'); container.replaceChildren();
+  (KPI_DATA.insights || []).forEach(insight=>{
+    const panel=textElement('article','','insight-panel'),heading=textElement('h2'); heading.append(createIcon(insight.icon),document.createTextNode(insight.title)); panel.append(heading);
+    if(insight.disclaimer)panel.append(textElement('p',insight.disclaimer,'insight-disclaimer'));
+    const list=document.createElement(insight.numbered?'ol':'ul'); insight.items.forEach(item=>list.append(textElement('li',item))); panel.append(list); container.append(panel);
+  });
 }
 
 // SECTION 6 · ANNOTATION FACTORY
@@ -212,18 +295,19 @@ function renderInflectionNotes(metric,panel) {
 const chartInstances=[];
 function renderKPICharts() {
   chartInstances.forEach(chart=>chart.destroy()); chartInstances.length=0;
-  document.getElementById('primary-charts').replaceChildren(); document.getElementById('supporting-charts').replaceChildren();
-  const librariesReady=typeof Chart!=='undefined'&&typeof ChartAnnotation!=='undefined';
-  if(librariesReady) Chart.register(ChartAnnotation);
+  document.getElementById('all-charts').replaceChildren();
+  const annotationPlugin=globalThis['chartjs-plugin-annotation'];
+  const librariesReady=typeof Chart!=='undefined'&&!!annotationPlugin;
+  if(librariesReady) Chart.register(annotationPlugin);
   KPI_DATA.metrics.forEach((metric,index)=>{
     const panel=textElement('article','','chart-panel'+(metric.primary?' primary':'')); panel.dataset.metric=metric.id;
     const heading=textElement('div','','chart-heading'),titleGroup=textElement('div');
     const title=textElement('h3',metric.title); title.id='chart-title-'+index; titleGroup.append(title,textElement('p',metric.description));
-    heading.append(titleGroup,textElement('span',statusLabel(metric.status),'badge')); panel.append(heading);
+    heading.append(createIcon(metric.icon),titleGroup,textElement('span',statusLabel(metric.status),'badge')); panel.append(heading);
     const periods=periodsFor(metric);
     panel.append(textElement('div',metric.unitLabel+' · '+periods.map(p=>'FY'+p).join(' / '),'chart-meta'));
     const wrap=textElement('div','','canvas-wrap'),canvas=document.createElement('canvas'); canvas.setAttribute('role','img'); canvas.setAttribute('aria-labelledby',title.id); canvas.textContent=metric.title+'; exact values are available in the data table below.'; wrap.append(canvas); panel.append(wrap);
-    (document.getElementById(metric.primary?'primary-charts':'supporting-charts')).append(panel);
+    document.getElementById('all-charts').append(panel);
     if(librariesReady) { try { chartInstances.push(new Chart(canvas,createChartConfig(metric))); } catch(error) { wrap.replaceChildren(textElement('p','Unable to render chart: '+error.message,'error')); console.error(error); } }
     else { wrap.replaceChildren(textElement('p','Chart dependencies could not load. Connect to the internet and reload to display charts. Values and explanations remain available below.','error')); }
     renderInflectionNotes(metric,panel);
@@ -255,15 +339,18 @@ function renderSources() {
 function initializeDashboard() {
   const company=KPI_DATA.company;
   document.title=company.name+' | '+company.title;
-  [['company-name',company.name],['dashboard-title',company.title],['reporting-period','Reporting period: '+company.reportingPeriod],['thesis',company.thesis],['project-label',company.project],['footer-project',company.project]].forEach(([id,value])=>document.getElementById(id).textContent=value);
+  [['company-name',company.name],['dashboard-title',company.title],['reporting-period','Fiscal Years '+KPI_DATA.periods[0]+' – '+KPI_DATA.periods.at(-1)],['thesis',company.thesis],['project-label',company.project],['footer-project',company.project],['banner-subtitle',company.bannerSubtitle],['brand-promise',company.brandPromise],['summary-heading',company.summaryTitle]].forEach(([id,value])=>document.getElementById(id).textContent=value);
   const statuses=KPI_DATA.metrics.flatMap(metric=>[metric.status,...(metric.valueStatuses || []),...(metric.sources || []).map(id=>sourceFor(id)?.status),...visibleInflections(metric).map(point=>sourceFor(point.sourceId)?.status)]).filter(Boolean);
   const distinct=[...new Set(statuses)];
   const status=statuses.includes('placeholder')?'placeholder':distinct.length===1?distinct[0]:distinct.length?'mixed':company.dataStatus==='illustrative'?'placeholder':company.dataStatus;
   const notice=document.getElementById('data-notice'); notice.dataset.status=status; notice.textContent=company.statusNotices[status] || 'Data Classification | Review Sources';
   document.getElementById('footer-status').textContent=notice.textContent;
-  renderKPICards(); renderKPICharts(); renderSources();
+  renderKPICards(); renderKPICharts(); renderInsights(); renderSources();
 }
 document.addEventListener('DOMContentLoaded',initializeDashboard);
+document.querySelectorAll('.nav-links a').forEach(link=>link.addEventListener('click',()=>{
+  document.querySelectorAll('.nav-links a').forEach(item=>item.classList.remove('active')); link.classList.add('active');
+}));
 </script>
 </body>
 </html>
